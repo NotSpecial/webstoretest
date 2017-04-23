@@ -53,23 +53,47 @@ export default {
     return [Math.min.apply(null, prices),
             Math.max.apply(null, prices)]
   },
-  cart: [],
+  cart: {},
   cartHooks : [],
   onCartUpdate(func) {
     this.cartHooks.push(func)
-  },
-  addToCart(id) {
-    // Todo: Add login
-    let item = this.getitem('products', id, {})
-    this.cart.push(item)
-
-    // Call hooks
-    for (let f of this.cartHooks) {f()}
   },
   getCart() {
     // Todo: Add login
     return this.cart
   },
+  // Modify content
+  addToCart(id, amount) {
+    // Todo: Add login
+
+    // If amount is not given, increment
+    if (this.cart.hasOwnProperty(id)) {
+      if (!amount) {
+        this.cart[id].amount += 1
+      } else {
+        console.log("in here")
+        this.cart[id].amount = amount
+      }
+    } else {
+      // Create with 1 or specified amount
+      if (!amount) {
+        amount = 1
+      }
+      this.cart[id] = {
+        'item': this.getitem('products', id, {}),
+        'amount': 1
+      }
+    }
+
+    // Call hooks
+    for (let f of this.cartHooks) {f()}
+  },
+  removeFromCart(id) {
+    delete this.cart[id]
+    // Call hooks
+    for (let f of this.cartHooks) {f()}
+  },
+
   mock : {
     products(query = {}) {
       let products = raw_products
