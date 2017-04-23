@@ -1,6 +1,6 @@
 <template>
 <div>
-    <h4>{{ title }}</h4>
+    <h4 v-on:click="jump">{{ title }}</h4>
     <input type="number" min="1"
            v-model.number="currentAmount"
            v-on:input="update"/>
@@ -19,6 +19,10 @@ export default {
     amount (value) {this.currentAmount = value}
   },
   methods: {
+    jump () {
+      // Go to the item page
+      this.$router.push({name: 'product', params:{id: this.id}})
+    },
     update () {
       this.$api.addToCart(this.id, this.currentAmount)
     },
