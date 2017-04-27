@@ -63,8 +63,6 @@ export default {
       }
     })
 
-    console.log(this.$refs.range.noUiSlider)
-
     // Now connect 'end' event to update price range
     this.$refs.range.noUiSlider.on('end', this.processSlider)
   }
