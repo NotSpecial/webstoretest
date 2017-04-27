@@ -9,7 +9,7 @@ var raw_products = [
    price: 25},
   {_id: "2",
    title: "Leine9000",
-   description: "Mindestens 8999 mal so gut wie eine herkömmliche Leine - ab jetzt haben Sie die Situation wieder in der Hand!",
+   description: "Mindestens 8999 mal besser wie eine herkömmliche Leine - ab jetzt haben Sie die Situation wieder in der Hand!",
    category: 'Leinen',
    vendor: "Schäfer's Hundeshop",
    price: 790},
