@@ -15,20 +15,16 @@
     </router-link>
   </small>
   <p>{{ product.price }} €</p>
-  <button v-if="!cart.content[product._id]"
-          v-on:click="cart.add(product._id)">
-    In den Warenkorb
-  </button>
-  <button v-else disabled>
-    Im Warenkorb
-  </button>
+  <cart-button :id="product._id"></cart-button>
 </div>
 </template>
 
 <script>
 import {cart} from '../api.js'
+import CartButton from './cart-button.vue'
 
 export default {
+  components: { CartButton },
   data() {return {'cart': cart}},
   props: ['product']
 }
