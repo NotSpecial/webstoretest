@@ -32,8 +32,8 @@ export default {
 
     // For nice slider, round to 50 and rember this too
     let prettyRange = {
-      'min': Math.floor(this.range[0] / 50) * 50,
-      'max': Math.ceil(this.range[1] / 50) * 50
+      'min': Math.floor(apiRange[0] / 50) * 50,
+      'max': Math.ceil(apiRange[1] / 50) * 50
     }
 
     // Manual margin so tooltips fit and format
