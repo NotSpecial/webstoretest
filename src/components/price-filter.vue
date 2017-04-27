@@ -26,7 +26,9 @@ export default {
     // Create the price slider as soon as the element is created
 
     // Get range from API
-    this.range = api.getPriceRange()
+    let apiRange = api.getPriceRange()
+    this.range = [this.$route.query.price_min || apiRange[0],
+                  this.$route.query.price_max || apiRange[1],]
 
     // For nice slider, round to 50 and rember this too
     let prettyRange = {
