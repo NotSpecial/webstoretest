@@ -3,6 +3,7 @@
 </template>
 
 <script>
+import {api} from '../api.js'
 import noUiSlider from 'nouislider'
 
 export default {
@@ -32,7 +33,7 @@ export default {
     // Create the price slider as soon as the element is created
 
     // Get range from API
-    this.lastValues = this.$api.getPriceRange()
+    this.lastValues = api.getPriceRange()
 
     // For nice slider, round to 50 and rember this too
     this.range = {

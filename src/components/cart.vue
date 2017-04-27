@@ -10,28 +10,20 @@
 </template>
 
 <script>
+import {cart} from '../api.js'
 import CartItem from './cart-item.vue'
 
 export default {
   components: { CartItem },
-  data() {
-    return {
-      'items': []
-    }
-  },
-  mounted() {
-    // Add hook
-    this.$api.onCartUpdate(() => {
-      let cart = this.$api.getCart()
-      
-      // Turn cart into a array for easier display
+  data() {return {content: cart.content}},
+  computed: {
+    items() {
       let items = []
-      Object.entries(cart).forEach(
+      Object.entries(this.content).forEach(
         ([key, value]) => items.push(value)
       )
-
-      this.items = items
-    })
+      return items
+    }
   }
 }
 </script>

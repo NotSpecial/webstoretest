@@ -15,14 +15,21 @@
     </router-link>
   </small>
   <p>{{ product.price }} €</p>
-  <button v-on:click="$api.addToCart(product._id)">
+  <button v-if="!cart.content[product._id]"
+          v-on:click="cart.add(product._id)">
     In den Warenkorb
+  </button>
+  <button v-else disabled>
+    Im Warenkorb
   </button>
 </div>
 </template>
 
 <script>
+import {cart} from '../api.js'
+
 export default {
+  data() {return {'cart': cart}},
   props: ['product']
 }
 </script>

@@ -7,13 +7,14 @@
 </template>
 
 <script>
+import {api} from '../api.js'
 import ProductListItem from './product-list-item.vue'
 
 export default {
   components: { ProductListItem },
   computed: {
     products: function () {
-      return this.$api.get('products', this.$route.query)
+      return api.get('products', this.$route.query)
     }
   }
 }

@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import {cart} from '../api.js'
+
 export default {
   props: ['id', 'title', 'amount'],
   data ()
@@ -23,10 +25,8 @@ export default {
       // Go to the item page
       this.$router.push({name: 'product', params:{id: this.id}})
     },
-    update () {
-      this.$api.addToCart(this.id, this.currentAmount)
-    },
-    remove () {this.$api.removeFromCart(this.id)}
+    update () {cart.update(this.id, this.currentAmount)},
+    remove () {cart.remove(this.id)}
   }
 }
 </script>

@@ -1,3 +1,5 @@
+import Vue from 'vue'
+
 var raw_products = [
   {_id: "1",
    title: "Leine",
@@ -29,7 +31,7 @@ var raw_vendors = [
   "Hundkatzemaus"
 ]
 
-export default {
+var api = {
   get(resource, query) {
     return this.mock[resource](query)
   },
@@ -53,48 +55,9 @@ export default {
     return [Math.min.apply(null, prices),
             Math.max.apply(null, prices)]
   },
-  cart: {},
-  cartHooks : [],
-  onCartUpdate(func) {
-    this.cartHooks.push(func)
-  },
-  getCart() {
-    // Todo: Add login
-    return this.cart
-  },
-  // Modify content
-  addToCart(id, amount) {
-    // Todo: Add login
 
-    // If amount is not given, increment
-    if (this.cart.hasOwnProperty(id)) {
-      if (!amount) {
-        this.cart[id].amount += 1
-      } else {
-        console.log("in here")
-        this.cart[id].amount = amount
-      }
-    } else {
-      // Create with 1 or specified amount
-      if (!amount) {
-        amount = 1
-      }
-      this.cart[id] = {
-        'item': this.getitem('products', id, {}),
-        'amount': 1
-      }
-    }
-
-    // Call hooks
-    for (let f of this.cartHooks) {f()}
-  },
-  removeFromCart(id) {
-    delete this.cart[id]
-    // Call hooks
-    for (let f of this.cartHooks) {f()}
-  },
-
-  mock : {
+  // Mock api
+  mock: {
     products(query = {}) {
       let products = raw_products
       if ('text' in query) {
@@ -138,3 +101,22 @@ export default {
     }
   }
 }
+
+// Shopping cart
+// Important: We need to use Vue.set / delete to make cart content reactive
+var cart = {
+  content: {},
+
+  add(id) {
+    // Add item to cart and set amount to one
+    Vue.set(this.content, id, {
+      'item': api.getitem('products', id, {}),
+      'amount': 1
+    })
+  },
+  update(id, amount) {this.content[id].amount = amount},
+  remove(id) {Vue.delete(this.content, id)}
+
+}
+
+export {api, cart}

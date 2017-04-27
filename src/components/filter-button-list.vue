@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import {api} from '../api.js'
 import FilterButton from './filter-button.vue'
 
 export default {
@@ -14,7 +15,7 @@ export default {
   props: ['resource'],
   computed: {
     items: function() {
-      return this.$api.get(this.resource)
+      return api.get(this.resource)
     }
   }
 }

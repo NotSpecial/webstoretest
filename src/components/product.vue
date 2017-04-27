@@ -24,12 +24,14 @@
 </template>
 
 <script>
+import {api} from '../api.js'
+
 export default {
   computed: {
     product() {
       // Get the product
       let id = this.$route.params.id
-      return this.$api.getitem('products', id, {})
+      return api.getitem('products', id, {})
     }
   }
 }
