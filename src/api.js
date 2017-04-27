@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import ls from 'local-storage'
 
 var raw_products = [
   {_id: "1",
@@ -107,16 +108,28 @@ var api = {
 var cart = {
   content: {},
 
-  add(id) {
+  add(id, amount=1) {
     // Add item to cart and set amount to one
     Vue.set(this.content, id, {
       'item': api.getitem('products', id, {}),
-      'amount': 1
+      'amount': amount
     })
+    this._save()
   },
-  update(id, amount) {this.content[id].amount = amount},
-  remove(id) {Vue.delete(this.content, id)}
+  update(id, amount) {
+    this.content[id].amount = amount
+    this._save()
+  },
+  remove(id) {
+    Vue.delete(this.content, id)
+    this._save()
+  },
 
+  // LocalStorage
+  _save() {ls.set('cartStorage', this.content)},
 }
+
+// Register callback for localStorage changes
+ls.on('cartStorage', (newContent) => {cart.content = newContent})
 
 export {api, cart}

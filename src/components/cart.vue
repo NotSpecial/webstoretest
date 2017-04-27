@@ -15,11 +15,11 @@ import CartItem from './cart-item.vue'
 
 export default {
   components: { CartItem },
-  data() {return {content: cart.content}},
+  data() {return {cart: cart}},
   computed: {
     items() {
       let items = []
-      Object.entries(this.content).forEach(
+      Object.entries(this.cart.content).forEach(
         ([key, value]) => items.push(value)
       )
       return items
