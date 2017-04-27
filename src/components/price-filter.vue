@@ -11,19 +11,12 @@ export default {
     processSlider(values) {
       // Get current query and change if needed
       let query = Object.assign({}, this.$route.query)
+      query.price_min = values[0]
+      query.price_max = values[1]
 
-      if (values[0] !== this.lastValues[0]) {
-        this.lastValues[0] = values[0]
-        query.price_min = values[0]
-      }
-      if (values[1] !== this.lastValues[1]) {
-        this.lastValues[1] = values[1]
-        query.price_max = values[1]
-      }
-
-      // If values is at the edge, remove key
-      if (values[0] == this.range.min) {delete query.price_min}
-      if (values[1] == this.range.max) {delete query.price_max}
+      // If values is at outside the range, we can remove the key
+      if (values[0] <= this.range[0]) {delete query.price_min}
+      if (values[1] >= this.range[1]) {delete query.price_max}
 
       // Update route
       this.$router.push({name : 'products', query: query})
@@ -33,12 +26,12 @@ export default {
     // Create the price slider as soon as the element is created
 
     // Get range from API
-    this.lastValues = api.getPriceRange()
+    this.range = api.getPriceRange()
 
     // For nice slider, round to 50 and rember this too
-    this.range = {
-      'min': Math.floor(this.lastValues[0] / 50) * 50,
-      'max': Math.ceil(this.lastValues[1] / 50) * 50
+    let prettyRange = {
+      'min': Math.floor(this.range[0] / 50) * 50,
+      'max': Math.ceil(this.range[1] / 50) * 50
     }
 
     // Manual margin so tooltips fit and format
@@ -49,8 +42,8 @@ export default {
     }
     // Initializing the noUiSlider
     noUiSlider.create(this.$refs.range, {
-      start: this.lastValues,
-      range: this.range,
+      start: this.range,
+      range: prettyRange,
       connect: true,
       // Only interested in integers, set format
       format: format,
