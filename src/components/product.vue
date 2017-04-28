@@ -22,17 +22,10 @@
 </template>
 
 <script>
-import {api} from '../api.js'
 import CartButton from './cart-button.vue'
 
 export default {
   components: { CartButton },
-  computed: {
-    product() {
-      // Get the product
-      let id = this.$route.params.id
-      return api.getitem('products', id, {})
-    }
-  }
+  props: ['product']
 }
 </script>

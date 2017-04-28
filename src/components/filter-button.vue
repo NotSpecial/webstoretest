@@ -1,23 +1,24 @@
 <template>
 <router-link :to='{name: "products", query: query}'
              :class='{ active: isActive}'>
-  {{ value }}
+  {{ item }}
 </router-link>
 </template>
 
 <script>
 export default {
-  props: ['resource', 'value'],
+  props: ['resource', 'item'],
   computed: {
     isActive() {
       try {
         return (this.$route.query[this.resource]
-                .indexOf(this.value) !== -1)
+                .indexOf(this.item) !== -1)
       } catch(e) {
         return false
       }
     },
     query() {
+      // TODO: This is ugly, improve!
       // base query, make sure we have a array for resource
       // params and copy over current query
       var query = {}
@@ -30,9 +31,9 @@ export default {
         query[this.resource] = [query[this.resource]]
       }
 
-      let match = (item) => { return (item !== this.value)}
+      let match = (item) => { return (item !== this.item)}
       let exclude = query[this.resource].filter(match)
-      let include = query[this.resource].concat(this.value)
+      let include = query[this.resource].concat(this.item)
       query[this.resource] = this.isActive ? exclude : include
 
       return query

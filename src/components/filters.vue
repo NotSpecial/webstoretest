@@ -1,3 +1,4 @@
+
 <template>
 <ul>
   <!-- Text filter -->
@@ -8,8 +9,10 @@
 
   <!-- Filters for specified resources -->
   <li v-for='res in Object.keys(resources)'>
-    <h4>{{ resources[res] }}</h4>
-    <filter-button-list :resource='res'></filter-button-list>
+    <h4>{{ resources[res].title }}</h4>
+    <filter-button-list :resource='res'
+                        :items='resources[res].items'>
+    </filter-button-list>
   </li>
 
   <!-- Price filter -->
@@ -27,8 +30,6 @@ import PriceFilter from './price-filter.vue'
 
 export default {
   components: {FilterButtonList, TextSearch, PriceFilter},
-  data() {
-    return {resources: {category: 'Kategorien', vendor: 'Händler'}}
-  },
+  props: ['resources']
 }
 </script>
