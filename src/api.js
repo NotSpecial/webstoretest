@@ -107,7 +107,7 @@ var api = {
 // Important: We need to use Vue.set / delete to make cart content reactive
 var cart = {
   // Get content of localstorage as initial data
-  content: ls.get('cartStorage'),
+  content: ls.get('cartStorage') || {},
 
   add(id, amount=1) {
     // Add item to cart and set amount to one
