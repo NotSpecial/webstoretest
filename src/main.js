@@ -20,16 +20,22 @@ function getItem(route) {
   return {product: api.getitem('products', id, {})}
 }
 
-function getResources(route) {
-  return {resources: {
-    category: {
-      title: 'Kategorien',
-      items: api.get('category')
-    }, 
-    vendor: {
-      title: 'Händler',
-      items: api.get('vendor')
-    }}}
+function filterProps(route) {
+  return {
+    resources: {
+      category: {
+        title: 'Kategorien',
+        items: api.get('category')
+      }, 
+      vendor: {
+        title: 'Händler',
+        items: api.get('vendor')
+      }
+    },
+    priceRange: api.getPriceRange(),
+    // Make a copy
+    query: Object.assign({}, route.query),
+    }
 }
 
 var router = new VueRouter({
@@ -42,7 +48,7 @@ var router = new VueRouter({
     },
     props : {
       main: getItems,
-      sidebar: getResources
+      sidebar: filterProps
     }
   }, {
     name: 'product',
@@ -53,7 +59,7 @@ var router = new VueRouter({
     },
     props: {
       main: getItem,
-      sidebar: getResources
+      sidebar: filterProps
     }
   }]
 })

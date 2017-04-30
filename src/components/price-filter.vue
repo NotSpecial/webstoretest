@@ -1,39 +1,35 @@
 <template>
-<div ref='range'></div>
+<li>
+  <h4>Preis</h4>
+  <div ref='range'></div>
+</li>
 </template>
 
 <script>
-import {api} from '../api.js'
 import noUiSlider from 'nouislider'
 
 export default {
+  props: ['value', 'range'],
   methods: {
     processSlider(values) {
-      // Get current query and change if needed
-      let query = Object.assign({}, this.$route.query)
-      query.price_min = values[0]
-      query.price_max = values[1]
-
-      // If values is at outside the range, we can remove the key
-      if (values[0] <= this.range[0]) {delete query.price_min}
-      if (values[1] >= this.range[1]) {delete query.price_max}
-
-      // Update route
-      this.$router.push({name : 'products', query: query})
+      // If value is at outside the range, we set it to undefined
+      let newValues = [
+        (values[0] > this.range[0]) ? values[0] : undefined,
+        (values[1] < this.range[1]) ? values[1] : undefined,
+      ]
+      // Notify parent
+      this.$emit('input', newValues)
     }
   },
   mounted() {
     // Create the price slider as soon as the element is created
+    let initial = [this.value[0] || this.range[0],
+                   this.value[1] || this.range[1],]
 
-    // Get range from API
-    let apiRange = api.getPriceRange()
-    this.range = [this.$route.query.price_min || apiRange[0],
-                  this.$route.query.price_max || apiRange[1],]
-
-    // For nice slider, round to 50 and rember this too
+    // For nice slider, round range to 50
     let prettyRange = {
-      'min': Math.floor(apiRange[0] / 50) * 50,
-      'max': Math.ceil(apiRange[1] / 50) * 50
+      'min': Math.floor(this.range[0] / 50) * 50,
+      'max': Math.ceil(this.range[1] / 50) * 50
     }
 
     // Manual margin so tooltips fit and format
@@ -44,7 +40,7 @@ export default {
     }
     // Initializing the noUiSlider
     noUiSlider.create(this.$refs.range, {
-      start: this.range,
+      start: initial,
       range: prettyRange,
       connect: true,
       // Only interested in integers, set format
