@@ -1,5 +1,5 @@
 <template>
-<div>
+<li>
 <h4>{{ title }}</h4>
 <ul>
   <li v-for='(active, item) in value'
@@ -8,7 +8,7 @@
     {{item}}
   </li>
 </ul>
-</div>
+</li>
 </template>
 
 <script>
@@ -19,9 +19,9 @@ export default {
   props: ['value', 'title'],
   methods: {
     emit(item, newStatus) {
-        let status = this.value
-        status[item] = newStatus
-        this.$emit('input', status)
+      let status = this.value
+      status[item] = newStatus
+      this.$emit('input', status)
     }
   }
 }
