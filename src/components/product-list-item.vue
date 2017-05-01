@@ -5,8 +5,8 @@
   </h3>
   <small>
     Von
-    <router-link :to="{name: 'products', query: {vendor: product.vendor}}">
-      {{ product.vendor }}
+    <router-link :to="{name: 'products', query: {brand: product.brand}}">
+      {{ product.brand }}
     </router-link>
     in der Kategorie
     <router-link

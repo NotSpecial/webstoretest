@@ -5,8 +5,8 @@
     Von
     <router-link
       :to="{name: 'products',
-            query: {vendor: product.vendor}}">
-      {{ product.vendor }}
+            query: {brand: product.brand}}">
+      {{ product.brand }}
     </router-link>
     in der Kategorie
     <router-link

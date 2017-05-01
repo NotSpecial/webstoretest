@@ -6,19 +6,19 @@ var raw_products = [
    title: "Leine",
    description: "Eine normale Leine. Damit lassen sich Hunde zügeln!",
    category: 'Leinen',
-   vendor: 'Hundkatzemaus',
+   brand: 'Hundkatzemaus',
    price: 25},
   {_id: "2",
    title: "Leine9000",
    description: "Mindestens 8999 mal besser wie eine herkömmliche Leine - ab jetzt haben Sie die Situation wieder in der Hand!",
    category: 'Leinen',
-   vendor: "Schäfer's Hundeshop",
+   brand: "Schäfer's Hundeshop",
    price: 790},
   {_id: "3",
    title: "Mantel",
    description: "Damit aus dem Dog ein HotDog wird, brauchen sie diesen Hundemantel. Arktistauglich",
    category: 'Mäntel',
-   vendor: "Schäfer's Hundeshop",
+   brand: "Schäfer's Hundeshop",
    price: 60}
 ]
 
@@ -27,7 +27,7 @@ var raw_categories = [
   'Mäntel'
 ]
 
-var raw_vendors = [
+var raw_brands = [
   "Schäfer's Hundeshop",
   "Hundkatzemaus"
 ]
@@ -61,6 +61,8 @@ var api = {
   mock: {
     products(query = {}) {
       let products = raw_products
+
+      // Text filter
       if ('text' in query) {
         products = products.filter(function(item) {
           let check = function(prop) {
@@ -70,17 +72,20 @@ var api = {
           return check('title') ||
                  check('description') ||
                  check('category') ||
-                 check('vendor')
+                 check('brand')
         })
       }
-      for (let cat of ['vendor', 'category']) {
+
+      // Category/brand filter
+      for (let cat of ['brand', 'category']) {
         if (cat in query) {
           products = products.filter(function(item) {
             return query[cat].indexOf(item[cat]) !== -1
           })
         }
       }
-      // price filters
+      
+      // price filter
       if ('price_min' in query) {
         products = products.filter( (item) => {
           return item.price >= query.price_min
@@ -94,11 +99,11 @@ var api = {
 
       return products
     },
-    category() {
+    categories() {
       return raw_categories;
     },
-    vendor() {
-      return raw_vendors;
+    brands() {
+      return raw_brands;
     }
   }
 }

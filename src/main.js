@@ -22,16 +22,8 @@ function getItem(route) {
 
 function filterProps(route) {
   return {
-    resources: {
-      category: {
-        title: 'Kategorien',
-        items: api.get('category')
-      }, 
-      vendor: {
-        title: 'Händler',
-        items: api.get('vendor')
-      }
-    },
+    categories: api.get('categories'),
+    brands: api.get('brands'),
     priceRange: api.getPriceRange(),
     // Make a copy
     query: Object.assign({}, route.query),

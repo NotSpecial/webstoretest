@@ -3,9 +3,11 @@
 <ul>
   <text-filter v-model="values.text"></text-filter>
   
-  <choice-filter v-for='(title, res) in titles'
-                 v-model='values.resources[res]'
-                 :title='title'>
+  <choice-filter v-model='values.categories'
+                 title='Kategorien'>
+  </choice-filter>
+  <choice-filter v-model='values.brands'
+                 title='Marken'>
   </choice-filter>
 
   <price-filter v-model='values.range' :range='priceRange'></price-filter>
@@ -19,48 +21,50 @@ import PriceFilter from './price-filter.vue'
 
 export default {
   components: {ChoiceFilter, TextFilter, PriceFilter},
-  props: ['resources', 'priceRange', 'query'],
+  props: ['categories', 'brands', 'priceRange', 'query'],
   data() {
     let q = this.query
     let values = {
       text: q.text || '',
       range: [q.price_min, q.price_max],
-      resources: {}
+      categories: {},
+      brands: {}
     }
-    // Dynamically add resource choices
-    function isActive(res, item) {
-      return ( (q[res] || []).indexOf(item) !== -1 )
+    // Dynamically add brand and category
+    function isActive(key, item) {
+      return ( (q[key] || []).indexOf(item) !== -1 )
     }
-    let titles = {}
-    Object.entries(this.resources).forEach(([res, data]) => {
-      titles[res] = data.title
-      values.resources[res] = {}
-      data.items.forEach((item) => {
-        values.resources[res][item] = isActive(res, item)
-      })
+    this.categories.forEach((cat) => {
+      values.categories[cat] = isActive('category', cat)
+    })
+    this.brands.forEach((brand) => {
+      values.brands[brand] = isActive('brand', brand)
     })
 
-    return {values: values,
-            titles: titles}
+    return {values: values}
   },
 
   methods: {
     push(values) {
-      let query = {}
+      let q = {}
       
       // Only add defined values to query to keep it short
-      if (values.text) {query.text = values.text}
-      if (values.range[0]) {query.price_min = values.range[0]}
-      if (values.range[1]) {query.price_min = values.range[1]}
+      if (values.text) {q.text = values.text}
+      if (values.range[0]) {q.price_min = values.range[0]}
+      if (values.range[1]) {q.price_min = values.range[1]}
       
-      Object.entries(values.resources).forEach(([res, items]) => {
-        let selected = Object.entries(items).map(
-          ([item, isActive]) => {if (isActive) {return item}}
-        ).filter(Boolean)  // Removed the 'undefined'
-        if (selected.length) {query[res] = selected}
-      })
+      // Categories and brands
+      // .filter(Boolean) removes the 'undefined'
+      function getActive(obj) {return Object.entries(obj).map(
+        ([item, active]) => {if (active) {return item}}).filter(Boolean)}
 
-      this.$router.push({name : 'products', query: query})
+      let cats = getActive(values.categories)
+      if (cats) {q['category'] = cats}
+
+      let brands = getActive(values.brands)
+      if (brands) {q['brand'] = brands}
+
+      this.$router.push({name : 'products', query: q})
     }
   },
 
