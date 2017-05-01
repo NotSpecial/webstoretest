@@ -1,16 +1,19 @@
 
 <template>
 <ul>
-  <text-filter v-model="values.text"></text-filter>
+  <text-filter v-model="values.text" @input='push'></text-filter>
   
   <choice-filter v-model='values.categories'
-                 title='Kategorien'>
+                 title='Kategorien'
+                 @input='push'>
   </choice-filter>
   <choice-filter v-model='values.brands'
-                 title='Marken'>
+                 title='Marken'
+                 @input='push'>
   </choice-filter>
 
-  <price-filter v-model='values.range' :range='priceRange'></price-filter>
+  <price-filter v-model='values.range' :range='priceRange' @input='push'>
+  </price-filter>
 </ul>
 </template>
 
@@ -23,55 +26,51 @@ export default {
   components: {ChoiceFilter, TextFilter, PriceFilter},
   props: ['categories', 'brands', 'priceRange', 'query'],
   data() {
-    let q = this.query
-    let values = {
-      text: q.text || '',
-      range: [q.price_min, q.price_max],
+    let defaults = {
+      text: '',
+      range: [],
       categories: {},
       brands: {}
     }
-    // Dynamically add brand and category
-    function isActive(key, item) {
-      return ( (q[key] || []).indexOf(item) !== -1 )
-    }
-    this.categories.forEach((cat) => {
-      values.categories[cat] = isActive('category', cat)
-    })
-    this.brands.forEach((brand) => {
-      values.brands[brand] = isActive('brand', brand)
-    })
-
-    return {values: values}
+    this.categories.forEach(cat => defaults.categories[cat] = false)
+    this.brands.forEach(brand => defaults.brands[brand] = false)
+    return {values: defaults}
   },
+  created() {this.readQuery(this.$route.query)},
+  watch: {'$route.query'(q) {this.readQuery(q)}},
 
   methods: {
-    push(values) {
+    readQuery(q) {
+      let v = this.values
+      if (q.text) v.text = q.text
+      if (q.price_min) v.range[0] = q.price_min
+      if (q.price_max) v.range[1] = q.price_max
+
+      // For Categories and Brands, check if they are in the query arrays
+      function isActive(key, item) {return (q[key] || []).indexOf(item) !== -1}
+      this.categories.forEach(cat => 
+        v.categories[cat] = isActive('category', cat))
+      this.brands.forEach(brand => v.brands[brand] = isActive('brand', brand))
+    },
+    push() {
       let q = {}
-      
+      let v = this.values
       // Only add defined values to query to keep it short
-      if (values.text) {q.text = values.text}
-      if (values.range[0]) {q.price_min = values.range[0]}
-      if (values.range[1]) {q.price_min = values.range[1]}
+      if (v.text) {q.text = v.text}
+      if (v.range[0]) {q.price_min = v.range[0]}
+      if (v.range[1]) {q.price_min = v.range[1]}
       
       // Categories and brands
-      // .filter(Boolean) removes the 'undefined'
       function getActive(obj) {return Object.entries(obj).map(
-        ([item, active]) => {if (active) {return item}}).filter(Boolean)}
+        ([item, active]) => {return active ? item : false}).filter(Boolean)}
 
-      let cats = getActive(values.categories)
+      let cats = getActive(v.categories)
       if (cats) {q['category'] = cats}
 
-      let brands = getActive(values.brands)
+      let brands = getActive(v.brands)
       if (brands) {q['brand'] = brands}
 
       this.$router.push({name : 'products', query: q})
-    }
-  },
-
-  watch: {
-    values: {
-      handler: function (values) {this.push(values)}, 
-      deep: true  // watch nested properties
     }
   }
 }
