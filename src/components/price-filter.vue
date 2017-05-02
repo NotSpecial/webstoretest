@@ -7,29 +7,35 @@
 
 <script>
 import noUiSlider from 'nouislider'
+import {api} from '../api.js'
 
 export default {
-  props: ['value', 'range'],
+  props: ['range'],
+  // Initial values
+  data() {return {min: 0, max: 1000}},
   methods: {
     processSlider(values) {
-      // If value is at outside the range, we set it to undefined
-      let newValues = [
-        (values[0] > this.range[0]) ? values[0] : undefined,
-        (values[1] < this.range[1]) ? values[1] : undefined,
-      ]
-      // Notify parent
-      this.$emit('input', newValues)
+      let q = Object.assign({}, this.$route.query)  // copy current query
+      
+      if (values[0] > this.min) {q.price_min = values[0]} 
+      else {delete q.price_min}
+      if (values[1] < this.max) {q.price_max = values[1]}
+      else {delete q.price_max}
+
+      this.$router.push({name : 'products', query: q})  
     }
   },
   mounted() {
+    [this.min, this.max] = api.getPriceRange()
+
     // Create the price slider as soon as the element is created
-    let initial = [this.value[0] || this.range[0],
-                   this.value[1] || this.range[1],]
+    let initial = [this.range[0] || this.min,
+                   this.range[1] || this.max]
 
     // For nice slider, round range to 50
     let prettyRange = {
-      'min': Math.floor(this.range[0] / 50) * 50,
-      'max': Math.ceil(this.range[1] / 50) * 50
+      min: Math.floor(this.min / 50) * 50,
+      max: Math.ceil(this.max / 50) * 50
     }
 
     // Manual margin so tooltips fit and format

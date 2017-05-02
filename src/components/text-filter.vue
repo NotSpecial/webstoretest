@@ -1,8 +1,8 @@
 <template>
 <li>
     <h4>Suche</h4>
-    <input :value='value' 
-           v-on:input='debouncedEmit($event)' 
+    <input :value='text' 
+           @input='debouncedPush($event.target.value)' 
            placeholder="Was suchen Sie?">
     </input>
 </li>
@@ -12,11 +12,13 @@
 import { debounce } from 'lodash'
 
 export default {
-  props: ['value'],
+  props: ['text'],
   methods: {
     // Use lodash debounce to emit only if input has stopped
-    debouncedEmit: debounce(function(event) {
-      this.$emit('input', event.target.value)
+    debouncedPush: debounce(function(text) {
+      let q = Object.assign({}, this.$route.query) // Copy current query
+      if (text) {q.text =text} else {delete q.text}
+      this.$router.push({name : 'products', query: q})
     }, 250)
   }
 }

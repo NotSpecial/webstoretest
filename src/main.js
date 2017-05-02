@@ -21,13 +21,19 @@ function getItem(route) {
 }
 
 function filterProps(route) {
+  function getStatus(key, items) {
+    let status = {}
+    items.forEach(item => {
+      status[item] = ((route.query[key] || []).indexOf(item) !== -1)
+    })
+    return status
+  }
   return {
-    categories: api.get('categories'),
-    brands: api.get('brands'),
-    priceRange: api.getPriceRange(),
-    // Make a copy
-    query: Object.assign({}, route.query),
-    }
+    text : route.query.text,
+    categories: getStatus('category', api.get('categories')),
+    brands: getStatus('brand', api.get('brands')),
+    priceRange: [route.query.price_min, route.query.price_max],
+  }
 }
 
 var router = new VueRouter({
