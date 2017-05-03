@@ -20,12 +20,12 @@
 </template>
 
 <script>
-import {cart} from '../api.js'
-import CartButton from './cart-button.vue'
+import { cart } from '@/api';
+import CartButton from './cart-button';
 
 export default {
   components: { CartButton },
-  data() {return {'cart': cart}},
-  props: ['product']
-}
+  data() { return { cart }; },
+  props: ['product'],
+};
 </script>

@@ -14,12 +14,12 @@
 </template>
 
 <script>
-import ChoiceFilter from './choice-filter.vue'
-import TextFilter from './text-filter.vue'
-import PriceFilter from './price-filter.vue'
+import ChoiceFilter from './choice-filter';
+import TextFilter from './text-filter';
+import PriceFilter from './price-filter';
 
 export default {
-  components: {ChoiceFilter, TextFilter, PriceFilter},
+  components: { ChoiceFilter, TextFilter, PriceFilter },
   props: ['text', 'categories', 'brands', 'priceRange'],
-}
+};
 </script>

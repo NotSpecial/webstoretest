@@ -9,24 +9,25 @@
 </template>
 
 <script>
-import {cart} from '../api.js'
+import { cart } from '@/api';
 
 export default {
   props: ['id', 'title', 'amount'],
-  data ()
+  data() {
     // Add the amount to data since we will modify it
-    {return {currentAmount: this.amount}},
+    return { currentAmount: this.amount };
+  },
   watch: {
     // Watch for changes (new value sent from api)
-    amount (value) {this.currentAmount = value}
+    amount(value) { this.currentAmount = value; },
   },
   methods: {
-    jump () {
+    jump() {
       // Go to the item page
-      this.$router.push({name: 'product', params:{id: this.id}})
+      this.$router.push({ name: 'product', params: { id: this.id } });
     },
-    update () {cart.update(this.id, this.currentAmount)},
-    remove () {cart.remove(this.id)}
-  }
-}
+    update() { cart.update(this.id, this.currentAmount); },
+    remove() { cart.remove(this.id); },
+  },
+};
 </script>

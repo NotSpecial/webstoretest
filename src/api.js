@@ -1,141 +1,133 @@
-import Vue from 'vue'
-import ls from 'local-storage'
+import Vue from 'vue';
+import ls from 'local-storage';
 
-var raw_products = [
-  {_id: "1",
-   title: "Leine",
-   description: "Eine normale Leine. Damit lassen sich Hunde zügeln!",
-   category: 'Leinen',
-   brand: 'Hundkatzemaus',
-   price: 25},
-  {_id: "2",
-   title: "Leine9000",
-   description: "Mindestens 8999 mal besser wie eine herkömmliche Leine - ab jetzt haben Sie die Situation wieder in der Hand!",
-   category: 'Leinen',
-   brand: "Schäfer's Hundeshop",
-   price: 790},
-  {_id: "3",
-   title: "Mantel",
-   description: "Damit aus dem Dog ein HotDog wird, brauchen sie diesen Hundemantel. Arktistauglich",
-   category: 'Mäntel',
-   brand: "Schäfer's Hundeshop",
-   price: 60}
-]
+const rawProducts = [{
+  _id: '1',
+  title: 'Leine',
+  description: 'Eine normale Leine. Damit lassen sich Hunde zügeln!',
+  category: 'Leinen',
+  brand: 'Hundkatzemaus',
+  price: 25,
+}, {
+  _id: '2',
+  title: 'Leine9000',
+  description: 'Mindestens 8999 mal besser wie eine herkömmliche Leine - ab jetzt haben Sie die Situation wieder in der Hand!',
+  category: 'Leinen',
+  brand: 'Schäfer\'s Hundeshop',
+  price: 790,
+}, {
+  _id: '3',
+  title: 'Mantel',
+  description: 'Damit aus dem Dog ein HotDog wird, brauchen sie diesen Hundemantel. Arktistauglich',
+  category: 'Mäntel',
+  brand: 'Schäfer\'s Hundeshop',
+  price: 60,
+}];
 
-var raw_categories = [
+const rawCategories = [
   'Leinen',
-  'Mäntel'
-]
+  'Mäntel',
+];
 
-var raw_brands = [
-  "Schäfer's Hundeshop",
-  "Hundkatzemaus"
-]
+const rawBrands = [
+  'Schäfer\'s Hundeshop',
+  'Hundkatzemaus',
+];
 
-var api = {
+const api = {
   get(resource, query) {
-    return this.mock[resource](query)
+    return this.mock[resource](query);
   },
-  getitem(resource, id, query) {
-    let getId = (item) => {return item._id == id}
-    let data = this.get(resource, query).filter(getId)
 
-    if (data.length > 0) {
-      return data[0]
-    } else {
-      return {}
-    }
+  getitem(resource, id, query) {
+    // eslint-disable-next-line no-underscore-dangle
+    const data = this.get(resource, query).filter(item => item._id === id);
+    return data[0] || {};
   },
+
   getPriceRange() {
     // Returns array [lowest price in api, highest]
-    let getPrices = (item) => {return item.price}
-    let prices = raw_products.map(getPrices)
+    const prices = rawProducts.map(item => item.price);
 
     // use weird apply and null since min and max dont
     // work with arrays out of the box
-    return [Math.min.apply(null, prices),
-            Math.max.apply(null, prices)]
+    return [Math.min.apply(null, prices), Math.max.apply(null, prices)];
   },
 
   // Mock api
   mock: {
     products(query = {}) {
-      let products = raw_products
+      let products = rawProducts;
 
       // Text filter
       if ('text' in query) {
-        products = products.filter(function(item) {
-          let check = function(prop) {
+        products = products.filter((item) => {
+          function check(prop) {
             return (item[prop].toLowerCase()
-                    .indexOf(query.text.toLowerCase())) !== -1
+                    .indexOf(query.text.toLowerCase())) !== -1;
           }
           return check('title') ||
                  check('description') ||
                  check('category') ||
-                 check('brand')
-        })
+                 check('brand');
+        });
       }
 
       // Category/brand filter
-      for (let cat of ['brand', 'category']) {
-        if (cat in query) {
-          products = products.filter(function(item) {
-            return query[cat].indexOf(item[cat]) !== -1
-          })
-        }
-      }
-      
+      ['brand', 'category'].filter(cat => cat in query).forEach((cat) => {
+        products = products.filter((item) => {
+          const key = item[cat];
+          return query[cat].indexOf(key) !== -1;
+        });
+      });
+
       // price filter
       if ('price_min' in query) {
-        products = products.filter( (item) => {
-          return item.price >= query.price_min
-        })
+        products = products.filter(item => item.price >= query.price_min);
       }
       if ('price_max' in query) {
-        products = products.filter( (item) => {
-          return item.price <= query.price_max
-        })
+        products = products.filter(item => item.price <= query.price_max);
       }
 
-      return products
+      return products;
     },
     categories() {
-      return raw_categories;
+      return rawCategories;
     },
     brands() {
-      return raw_brands;
-    }
-  }
-}
+      return rawBrands;
+    },
+  },
+};
 
 // Shopping cart
 // Important: We need to use Vue.set / delete to make cart content reactive
-var cart = {
+const cart = {
   // Get content of localstorage as initial data
   content: ls.get('cartStorage') || {},
 
-  add(id, amount=1) {
+  add(id, amount = 1) {
     // Add item to cart and set amount to one
     Vue.set(this.content, id, {
-      'item': api.getitem('products', id, {}),
-      'amount': amount
-    })
-    this._save()
+      item: api.getitem('products', id, {}),
+      amount,
+    });
+    this.save();
   },
   update(id, amount) {
-    this.content[id].amount = amount
-    this._save()
+    this.content[id].amount = amount;
+    this.save();
   },
   remove(id) {
-    Vue.delete(this.content, id)
-    this._save()
+    Vue.delete(this.content, id);
+    this.save();
   },
 
   // LocalStorage
-  _save() {ls.set('cartStorage', this.content)},
-}
+  save() { ls.set('cartStorage', this.content); },
+};
 
 // Register callback for localStorage changes
-ls.on('cartStorage', (newContent) => {cart.content = newContent})
+ls.on('cartStorage', (newContent) => { cart.content = newContent; });
 
-export {api, cart}
+export { api, cart };

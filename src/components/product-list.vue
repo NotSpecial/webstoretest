@@ -7,10 +7,10 @@
 </template>
 
 <script>
-import ProductListItem from './product-list-item.vue'
+import ProductListItem from './product-list-item';
 
 export default {
   components: { ProductListItem },
   props: ['products'],
-}
+};
 </script>

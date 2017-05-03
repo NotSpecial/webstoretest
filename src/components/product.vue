@@ -22,10 +22,10 @@
 </template>
 
 <script>
-import CartButton from './cart-button.vue'
+import CartButton from './cart-button';
 
 export default {
   components: { CartButton },
-  props: ['product']
-}
+  props: ['product'],
+};
 </script>

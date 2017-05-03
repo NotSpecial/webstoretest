@@ -11,10 +11,10 @@
 </template>
 
 <script>
-import {cart} from '../api.js'
+import { cart } from '@/api';
 
 export default {
-  data() {return {'cart': cart}},
-  props: ['id']
-}
+  data() { return { cart }; },
+  props: ['id'],
+};
 </script>
